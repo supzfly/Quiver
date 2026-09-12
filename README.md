@@ -1,2 +1,2 @@
 # Quiver
-Valheim mod adding extra arroiws to the game
+Valheim mod adding extra arrows to the game
