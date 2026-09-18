@@ -17,12 +17,7 @@ namespace Quiver
 			var itemDrop = CI.ItemDrop;
 			itemDrop.m_itemData.m_shared.m_name = "Heavy Dverger Circlet";
 			//itemDrop.m_itemData.m_shared.m_description = "";
-			itemDrop.m_itemData.m_shared.m_armor = 150;
-			itemDrop.m_itemData.m_shared.m_movementModifier = 0.15f;
-
-			itemDrop.m_itemData.m_shared.m_heatResistanceModifier = 0.20f; // 20% heat resistance
-
-			itemDrop.m_itemData.m_shared.m_eitrRegenModifier = 0.20f; // 10% eitr regen
+			HeavyLoader.ApplyHeavyConfigFromString(itemDrop.m_itemData.m_shared, heavyDamageTypesConfig.Value);
 
 			// resistance
 			int modPoison = Enum.TryParse<NewDamageTypes>("Poison", out NewDamageTypes resultPoison) ? (int)resultPoison : (int)Enum.Parse(typeof(HitData.DamageType), "Poison");

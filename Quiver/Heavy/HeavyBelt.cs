@@ -17,8 +17,7 @@ namespace Quiver
 			var itemDrop = CI.ItemDrop;
 			itemDrop.m_itemData.m_shared.m_name = "Heavy Megingjord";
 			//itemDrop.m_itemData.m_shared.m_description = "";
-			itemDrop.m_itemData.m_shared.m_armor = 150;
-			itemDrop.m_itemData.m_shared.m_movementModifier = 0.15f;
+			HeavyLoader.ApplyHeavyConfigFromString(itemDrop.m_itemData.m_shared, heavyDamageTypesConfig.Value);
 			itemDrop.m_itemData.m_shared.m_weight = 0;
 
 			// resistance
