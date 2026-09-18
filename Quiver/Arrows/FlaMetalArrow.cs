@@ -9,7 +9,7 @@ namespace Quiver
 
 		private void AddFlaMetalArrows()
 		{
-			// Create and add a custom item based on SwordBlackmetal
+			// Create and add a custom item
 			CustomItem CI = new CustomItem("ArrowFlaMetal", "ArrowFire");
 			ItemManager.Instance.AddItem(CI);
 

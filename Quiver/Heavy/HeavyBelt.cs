@@ -7,18 +7,18 @@ namespace Quiver
 {
 	partial class Quiver
 	{
-		private void AddHeavyWishbone()
+		private void AddHeavyBelt()
 		{
-			// Create and add a custom item based on Wishbone
-			CustomItem CI = new CustomItem("WishboneHeavy", "Wishbone");
+			// Create and add a custom item
+			CustomItem CI = new CustomItem("BeltStrengthHeavy", "BeltStrength");
 			ItemManager.Instance.AddItem(CI);
 
 			// Replace vanilla properties of the custom item
 			var itemDrop = CI.ItemDrop;
-			itemDrop.m_itemData.m_shared.m_name = "Heavy Wishbone";
+			itemDrop.m_itemData.m_shared.m_name = "Heavy Megingjord";
 			//itemDrop.m_itemData.m_shared.m_description = "";
-			itemDrop.m_itemData.m_shared.m_armor = ArmourValue.Value;
-			itemDrop.m_itemData.m_shared.m_movementModifier = MovementValue.Value;
+			itemDrop.m_itemData.m_shared.m_armor = 150;
+			itemDrop.m_itemData.m_shared.m_movementModifier = 0.15f;
 			itemDrop.m_itemData.m_shared.m_weight = 0;
 
 			// resistance
@@ -35,15 +35,15 @@ namespace Quiver
 			itemDrop.m_itemData.m_shared.m_damageModifiers.Add(new HitData.DamageModPair() { m_type = (HitData.DamageType)modLightning, m_modifier = (HitData.DamageModifier)Enum.Parse(typeof(HitData.DamageModifier), "Resistant") });
 
 			// Create recipe
-			RecipeHeavyWishbone(itemDrop);
+			RecipeHeavyBelt(itemDrop);
 
-		}
+		}		
 
-		private static void RecipeHeavyWishbone(ItemDrop itemDrop)
+		private static void RecipeHeavyBelt(ItemDrop itemDrop)
 		{
 			// Create and add a recipe for the copied item
 			Recipe recipe = ScriptableObject.CreateInstance<Recipe>();
-			recipe.name = "Recipe_HeavyWishbone";
+			recipe.name = "Recipe_HeavyBelt";
 			recipe.m_item = itemDrop;
 			recipe.m_amount = 1;
 			recipe.m_craftingStation = PrefabManager.Cache.GetPrefab<CraftingStation>("piece_workbench");
@@ -51,7 +51,7 @@ namespace Quiver
 			{
 			new Piece.Requirement()
 			{
-				m_resItem = PrefabManager.Cache.GetPrefab<ItemDrop>("Wishbone"),
+				m_resItem = PrefabManager.Cache.GetPrefab<ItemDrop>("BeltStrength"),
 				m_amount = 1
 			}
 			};

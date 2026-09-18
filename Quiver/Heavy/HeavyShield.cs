@@ -6,26 +6,26 @@ namespace Quiver
 {
 	partial class Quiver
 	{
-		private void AddCheatShield()
+		private void AddHeavyShield()
 		{
 			// Create and add a custom item 
-			CustomItem CI = new CustomItem("ShieldNight", "ShieldKnight");
+			CustomItem CI = new CustomItem("ShieldHeavy", "ShieldKnight");
 			ItemManager.Instance.AddItem(CI);
 
 			// Replace vanilla properties of the custom item
 			var itemDrop = CI.ItemDrop;
-			itemDrop.m_itemData.m_shared.m_name = "zNight Shield";
+			itemDrop.m_itemData.m_shared.m_name = "Heavy Shield";
 
-			// Create recipe
-			RecipeNightShield(itemDrop);
+            // Create recipe
+            RecipeHeavyShield(itemDrop);
 
 		}
 
-		private static void RecipeNightShield(ItemDrop itemDrop)
+		private static void RecipeHeavyShield(ItemDrop itemDrop)
 		{
 			// Create and add a recipe for the copied item
 			Recipe recipe = ScriptableObject.CreateInstance<Recipe>();
-			recipe.name = "Recipe_RecipeNightShield";
+			recipe.name = "Recipe_HeavyShield";
 			recipe.m_item = itemDrop;
 			recipe.m_amount = 1;
 			recipe.m_craftingStation = PrefabManager.Cache.GetPrefab<CraftingStation>("piece_workbench");

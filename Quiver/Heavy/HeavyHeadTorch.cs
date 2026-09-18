@@ -7,19 +7,22 @@ namespace Quiver
 {
 	partial class Quiver
 	{
-		private void AddHeavyWisplight()
+		private void AddHeavyHeadTorch()
 		{
-			// Create and add a custom item based on Wisplight
-			CustomItem CI = new CustomItem("DemisterHeavy", "Demister");
+			// Create and add a custom item
+			CustomItem CI = new CustomItem("HelmetDvergerHeavy", "HelmetDverger");
 			ItemManager.Instance.AddItem(CI);
 
 			// Replace vanilla properties of the custom item
 			var itemDrop = CI.ItemDrop;
-			itemDrop.m_itemData.m_shared.m_name = "Heavy Wisplight";
+			itemDrop.m_itemData.m_shared.m_name = "Heavy Dverger Circlet";
 			//itemDrop.m_itemData.m_shared.m_description = "";
-			itemDrop.m_itemData.m_shared.m_armor = ArmourValue.Value;
-			itemDrop.m_itemData.m_shared.m_movementModifier = MovementValue.Value;
-			itemDrop.m_itemData.m_shared.m_weight = 0;
+			itemDrop.m_itemData.m_shared.m_armor = 150;
+			itemDrop.m_itemData.m_shared.m_movementModifier = 0.15f;
+
+			itemDrop.m_itemData.m_shared.m_heatResistanceModifier = 0.20f; // 20% heat resistance
+
+			itemDrop.m_itemData.m_shared.m_eitrRegenModifier = 0.20f; // 10% eitr regen
 
 			// resistance
 			int modPoison = Enum.TryParse<NewDamageTypes>("Poison", out NewDamageTypes resultPoison) ? (int)resultPoison : (int)Enum.Parse(typeof(HitData.DamageType), "Poison");
@@ -35,15 +38,15 @@ namespace Quiver
 			itemDrop.m_itemData.m_shared.m_damageModifiers.Add(new HitData.DamageModPair() { m_type = (HitData.DamageType)modLightning, m_modifier = (HitData.DamageModifier)Enum.Parse(typeof(HitData.DamageModifier), "Resistant") });
 
 			// Create recipe
-			RecipeHeavyWisplight(itemDrop);
+			RecipeHeavyHeadTorch(itemDrop);
 
-		}
+		}		
 
-		private static void RecipeHeavyWisplight(ItemDrop itemDrop)
+		private static void RecipeHeavyHeadTorch(ItemDrop itemDrop)
 		{
 			// Create and add a recipe for the copied item
 			Recipe recipe = ScriptableObject.CreateInstance<Recipe>();
-			recipe.name = "Recipe_HeavyWisplight";
+			recipe.name = "Recipe_HeavyHeadTorch";
 			recipe.m_item = itemDrop;
 			recipe.m_amount = 1;
 			recipe.m_craftingStation = PrefabManager.Cache.GetPrefab<CraftingStation>("piece_workbench");
@@ -51,7 +54,7 @@ namespace Quiver
 			{
 			new Piece.Requirement()
 			{
-				m_resItem = PrefabManager.Cache.GetPrefab<ItemDrop>("Demister"),
+				m_resItem = PrefabManager.Cache.GetPrefab<ItemDrop>("HelmetDverger"),
 				m_amount = 1
 			}
 			};

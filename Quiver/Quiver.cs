@@ -1,46 +1,70 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using Jotunn.Configs;
 using Jotunn.Managers;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
+using UnityEngine;
 
 namespace Quiver
 {
-	/// <summary>
-	/// Changelog
-	/// 0.4.3
-	/// Implemented Elemental and Chromatic Arrows
-	/// 0.5.4
-	/// # Changed Chromatic arrow to require 5 x needle arrows rather than 4 needles
-	/// # Reduced bone arrow damage to 26 (was 28) (You happy now Jugger?!!!)
-	/// # Added custom asset images for the new arrows
-	/// 1.5.4
-	/// # Rewrote mod for Hearth & home
-	/// # Only including basic arrows currently (no elemental/chromatic)
-	/// 1.6.4
-	/// # Added 
-	/// 1.7.2
-	/// # Added pickaxe arrows I guess (got lazy and didn't comment at the time)
-	/// 1.8.2
-	/// # Added axe arrows coz 'why not' that's why
-	/// 1.8.3
-	/// # Changed Flametal arrows to use new naming
-	/// 1.9.0
-	/// # Adding heat resistance to headtorch.
-	/// # Tidying up config naming - will require a config reset
-	/// 1.9.1
-	/// # Adding Eitr regen.
-	/// </summary>
-	[BepInPlugin("fly.quiver", "Quiver", "1.9.1")]
+    /// <summary>
+    /// Changelog
+    /// 2.0.0
+    /// # Updating for Valheim 1.0
+    /// # Converted to use json file for item definitions 
+    /// 1.9.1
+    /// # Adding Eitr regen.
+    /// 1.9.0
+    /// # Adding heat resistance to headtorch.
+    /// # Tidying up config naming - will require a config reset
+    /// 1.8.3
+    /// # Changed Flametal arrows to use new naming
+    /// 1.8.2
+    /// # Added axe arrows coz 'why not' that's why
+    /// 1.7.2
+    /// # Added pickaxe arrows I guess (got lazy and didn't comment at the time)
+    /// 1.6.4
+    /// # Added 
+    /// 1.5.4
+    /// # Rewrote mod for Hearth & home
+    /// # Only including basic arrows currently (no elemental/chromatic)
+    /// 0.5.4
+    /// # Changed Chromatic arrow to require 5 x needle arrows rather than 4 needles
+    /// # Reduced bone arrow damage to 26 (was 28) (You happy now Jugger?!!!)
+    /// # Added custom asset images for the new arrows
+    /// 0.4.3
+    /// Implemented Elemental and Chromatic Arrows
+    /// </summary>
+    [BepInPlugin("fly.quiver", "Quiver", "2.0.0")]
 	[BepInDependency(Jotunn.Main.ModGuid)]
 	public partial class Quiver : BaseUnityPlugin
 
 	{
-		// Configuration values
-		private ConfigEntry<string> Password;
-		private ConfigEntry<float> MovementValue;
-		private ConfigEntry<float> HeatValue;
-		private ConfigEntry<float> EitrValue;
-		private ConfigEntry<int> ArmourValue;
-		//private ConfigEntry<bool> BoolConfig1;
+		// Bound config entries per arrow: arrowName -> (damageTypes, resources)
+		private Dictionary<string, ConfigEntry<string>> arrowDamageTypesConfigs = new Dictionary<string, ConfigEntry<string>>();
+		private Dictionary<string, ConfigEntry<string>> arrowResourcesConfigs = new Dictionary<string, ConfigEntry<string>>();
+
+		// Secret/hidden config option - not shown in the in-game Configuration Manager
+		private ConfigEntry<string> loadHeavyConfig;
+
+		// SHA-256 hash of the expected loadheavy value, so the plaintext isn't readable in source
+		private const string LoadHeavyHash = "19c2fe415a020812c18279fcdfd6028498ecbbf1791824dbe20e2946b3f95fe1";
+
+		private static string ComputeSha256(string value)
+		{
+			using (SHA256 sha256 = SHA256.Create())
+			{
+				byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(value ?? string.Empty));
+				StringBuilder builder = new StringBuilder(bytes.Length * 2);
+				foreach (byte b in bytes)
+				{
+					builder.Append(b.ToString("x2"));
+				}
+				return builder.ToString();
+			}
+		}
 
 		private enum NewDamageTypes
 		{
@@ -49,87 +73,109 @@ namespace Quiver
 
 		private void Awake()
 		{
-			//config
+			// Bind config entries for arrows
 			CreateConfigValues();
 
-			// Add custom items cloned from vanilla items
-			PrefabManager.OnVanillaPrefabsAvailable += AddBoneArrows;
-			PrefabManager.OnVanillaPrefabsAvailable += AddBlackMetalArrows;
-			PrefabManager.OnVanillaPrefabsAvailable += AddCrystalArrows;
-			PrefabManager.OnVanillaPrefabsAvailable += AddSurtlingArrows;
-			PrefabManager.OnVanillaPrefabsAvailable += AddFlaMetalArrows;
-			// mining
-			//PrefabManager.OnVanillaPrefabsAvailable += AddPickaxeAntlerArrows;
-			//PrefabManager.OnVanillaPrefabsAvailable += AddPickaxeBronzeArrows;
-			PrefabManager.OnVanillaPrefabsAvailable += AddPickaxeIronArrows;
-			// wood cutting
-			//PrefabManager.OnVanillaPrefabsAvailable += AddAxeFlintArrows;
-			PrefabManager.OnVanillaPrefabsAvailable += AddAxeIronArrows;
-			// lawl
-			PrefabManager.OnVanillaPrefabsAvailable += AddHolyHandGrendade;
+			// Hidden config entry (not visible in Configuration Manager)
+			loadHeavyConfig = Config.Bind(
+				"zArrows",
+				"Resources",
+				"none",
+				new ConfigDescription(
+					"",
+					null,
+					new ConfigurationManagerAttributes { Browsable = false }
+				)
+			);
+
+			// Load custom items from config
+			PrefabManager.OnVanillaPrefabsAvailable += LoadArrowsFromConfig;
 
 			// for me
-			if (Password.Value == "ysatb") {
+			if (ComputeSha256(loadHeavyConfig.Value) == LoadHeavyHash) {
 				PrefabManager.OnVanillaPrefabsAvailable += AddHeavyHeadTorch;
-				PrefabManager.OnVanillaPrefabsAvailable += AddHeavyWishbone;
 				PrefabManager.OnVanillaPrefabsAvailable += AddHeavyBelt;
-				PrefabManager.OnVanillaPrefabsAvailable += AddCheatSword;
-				PrefabManager.OnVanillaPrefabsAvailable += AddCheatShield;
-				PrefabManager.OnVanillaPrefabsAvailable += AddHeavyWisplight;
+				PrefabManager.OnVanillaPrefabsAvailable += AddHeavySword;
+				PrefabManager.OnVanillaPrefabsAvailable += AddHeavyShield;
 			}
 
 		}
 
-		// Create some sample configuration values
+		// Bind config entries for each arrow using ArrowLoader's default data
 		private void CreateConfigValues()
 		{
 			Config.SaveOnConfigSet = true;
 
-			// Add client config which can be edited in every local instance independently
-			Password = Config.Bind("Client config", "PV", "",
-				new ConfigDescription("PV String", 
-				null,
-				new ConfigurationManagerAttributes() { Browsable = false }));
+			foreach (var arrowDefaults in ArrowLoader.ArrowDefaultsList)
+			{
+				string arrowName = arrowDefaults.arrowName;
+				var metadata = ArrowLoader.GetArrowMetadata(arrowName);
+				string section = metadata != null ? metadata.displayName : arrowName;
 
-			MovementValue = Config.Bind("Client config", "MV", 0.15f,
-				new ConfigDescription("MV Float", 
-				new AcceptableValueRange<float>(0f, 1f), 
-				new ConfigurationManagerAttributes() { Browsable = false }));
+				var damageTypesEntry = Config.Bind(section, "DamageTypes", arrowDefaults.damageTypes,
+					new ConfigDescription("Damage types and values in format 'type:value,type:value,...' (e.g. pierce:26,blunt:40)",
+					null,
+					new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-			HeatValue = Config.Bind("Client config", "HV", 0.20f,
-				new ConfigDescription("HV Float",
-				new AcceptableValueRange<float>(0f, 1f),
-				new ConfigurationManagerAttributes() { Browsable = false }));
+				var resourcesEntry = Config.Bind(section, "Resources", arrowDefaults.resources,
+					new ConfigDescription("Crafting resources in format 'itemName:amount,itemName:amount,...' (e.g. Wood:8,Feathers:2)",
+					null,
+					new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-			EitrValue = Config.Bind("Client config", "EV", 0.20f,
-				new ConfigDescription("EV Float",
-				new AcceptableValueRange<float>(0f, 1f),
-				new ConfigurationManagerAttributes() { Browsable = false }));
+				arrowDamageTypesConfigs[arrowName] = damageTypesEntry;
+				arrowResourcesConfigs[arrowName] = resourcesEntry;
 
-			ArmourValue = Config.Bind("Client config", "AV", 150,
-				new ConfigDescription("AV Int",
-				null,
-				new ConfigurationManagerAttributes() { Browsable = false }));
-
-			//BoolConfig1 = Config.Bind("Client config", "BoolSetting1", false,
-			//	new ConfigDescription("A boolean value",
-			//	null,
-			//	new ConfigurationManagerAttributes() { Browsable = false }));
-
+				// Live refresh: apply updated values to the already-created arrow without requiring a restart
+				damageTypesEntry.SettingChanged += (sender, args) => RefreshArrow(arrowName);
+				resourcesEntry.SettingChanged += (sender, args) => RefreshArrow(arrowName);
+			}
 		}
 
-		// Reading and writing configuration values
-		private void ReadAndWriteConfigValues()
+		// Build an ArrowConfig for the given arrow from its currently bound config entries
+		private ArrowLoader.ArrowConfig BuildArrowConfig(string arrowName)
 		{
-			// Reading configuration entry
-			//string readValue = Setting1.Value;
-			// or
-			//float readBoxedValue = (float)Config["Client config", "LocalFloat"].BoxedValue;
+			return new ArrowLoader.ArrowConfig
+			{
+				arrowName = arrowName,
+				damageTypes = ArrowLoader.ParseDamageTypesString(arrowDamageTypesConfigs[arrowName].Value),
+				recipe = new ArrowLoader.RecipeConfig
+				{
+					resources = ArrowLoader.ParseResourcesString(arrowResourcesConfigs[arrowName].Value)
+				}
+			};
+		}
 
-			// Writing configuration entry
-			//IntegerConfig.Value = 150;
-			// or
-			//Config["Client config", "LocalBool"].BoxedValue = true;
+		// Rebuild a single arrow's config from bound entries and push it to ArrowLoader for a live update
+		private void RefreshArrow(string arrowName)
+		{
+			try
+			{
+				ArrowLoader.RefreshArrowFromConfig(BuildArrowConfig(arrowName));
+			}
+			catch (System.Exception ex)
+			{
+				Jotunn.Logger.LogError($"Error refreshing arrow '{arrowName}' from config: {ex.Message}\n{ex.StackTrace}");
+			}
+		}
+
+		// Build ArrowConfig list from bound config entries and create the arrows
+		private void LoadArrowsFromConfig()
+		{
+			try
+			{
+				List<ArrowLoader.ArrowConfig> arrows = new List<ArrowLoader.ArrowConfig>();
+
+				foreach (var arrowDefaults in ArrowLoader.ArrowDefaultsList)
+				{
+					arrows.Add(BuildArrowConfig(arrowDefaults.arrowName));
+				}
+
+				ArrowLoader.CreateArrowsFromConfigs(arrows);
+			}
+			catch (System.Exception ex)
+			{
+				Jotunn.Logger.LogError($"Error loading Arrows from config: {ex.Message}\n{ex.StackTrace}");
+			}
 		}
 	}
 }

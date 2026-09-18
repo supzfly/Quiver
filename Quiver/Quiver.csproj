@@ -51,9 +51,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\BepInEx.Preloader.dll</HintPath>
     </Reference>
-    <Reference Include="Jotunn, Version=2.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Jotunn, Version=2.24.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libs\Jotunn.dll</HintPath>
+      <HintPath>..\..\Jotunn.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -93,36 +93,41 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AxeIronArrow.cs" />
-    <Compile Include="BlackMetalArrow.cs" />
-    <Compile Include="CheatShield.cs" />
-    <Compile Include="CheatSword.cs" />
-    <Compile Include="HeavyBelt.cs" />
-    <Compile Include="HeavyWisplight.cs" />
-    <Compile Include="HeavyWishbone.cs" />
-    <Compile Include="CrystalArrow.cs" />
-    <Compile Include="FlaMetalArrow.cs" />
-    <Compile Include="HeavyHeadTorch.cs" />
-    <Compile Include="HolyHandgrenade.cs" />
-    <Compile Include="BoneArrow.cs" />
-    <Compile Include="PickaxeIronArrow.cs" />
+    <Compile Include="ArrowLoader.cs" />
+    <Compile Include="Arrows\BlackMetalArrow.cs" />
+    <Compile Include="Heavy\HeavyShield.cs" />
+    <Compile Include="Heavy\HeavySword.cs" />
+    <Compile Include="Heavy\HeavyBelt.cs" />
+    <Compile Include="Arrows\CrystalArrow.cs" />
+    <Compile Include="Arrows\FlaMetalArrow.cs" />
+    <Compile Include="Heavy\HeavyHeadTorch.cs" />
+    <Compile Include="Arrows\BoneArrow.cs" />
+    <Compile Include="Arrows\PickaxeIronArrow.cs" />
     <Compile Include="Quiver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SurtlingCoreArrow.cs" />
+    <Compile Include="Arrows\SurtlingCoreArrow.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="QuiverAssets\arrow_pickaxe_antler.png" />
-    <Content Include="QuiverAssets\arrow_blackmetal.png" />
-    <Content Include="QuiverAssets\arrow_bone.png" />
-    <Content Include="QuiverAssets\arrow_chromatic.png" />
-    <Content Include="QuiverAssets\arrow_crystal.png" />
-    <Content Include="QuiverAssets\arrow_elemental.png" />
-    <Content Include="QuiverAssets\arrow_flametal.png" />
-    <Content Include="QuiverAssets\arrow_pickaxe_bronze.png" />
-    <Content Include="QuiverAssets\arrow_pickaxe_iron.png" />
-    <Content Include="QuiverAssets\arrow_surtling.png" />
-    <Content Include="QuiverAssets\holy_hand_grenade.png" />
+    <Content Include="QuiverAssets\arrow_blackmetal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QuiverAssets\arrow_bone.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QuiverAssets\arrow_crystal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QuiverAssets\arrow_flametal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QuiverAssets\arrow_pickaxe_iron.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QuiverAssets\arrow_surtling.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

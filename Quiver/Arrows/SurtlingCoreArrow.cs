@@ -9,7 +9,7 @@ namespace Quiver
 
 		private void AddSurtlingArrows()
 		{
-			// Create and add a custom item based on SwordBlackmetal
+			// Create and add a custom item
 			CustomItem CI = new CustomItem("ArrowSurtling", "ArrowFire");
 			ItemManager.Instance.AddItem(CI);
 

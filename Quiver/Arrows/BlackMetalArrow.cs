@@ -7,39 +7,36 @@ namespace Quiver
 	partial class Quiver
 	{
 
-		private void AddCrystalArrows()
+		private void AddBlackMetalArrows()
 		{
-			// Create and add a custom item based on SwordBlackmetal
-			CustomItem CI = new CustomItem("ArrowCrystal", "ArrowSilver");
+			// Create and add a custom item
+			CustomItem CI = new CustomItem("ArrowBlackMetal", "ArrowObsidian");
 			ItemManager.Instance.AddItem(CI);
 
 			// Replace vanilla properties of the custom item
 			var itemDrop = CI.ItemDrop;
-			itemDrop.m_itemData.m_shared.m_name = "Crystal Arrow";
-			itemDrop.m_itemData.m_shared.m_description = "Tipped with a shard of crystal. It's structure resonates with the power of the Gods.";
-			itemDrop.m_itemData.m_shared.m_weight = 0.1f; 
-			itemDrop.m_itemData.m_shared.m_damages.m_pierce = 82;
-			itemDrop.m_itemData.m_shared.m_damages.m_lightning = 40;
+			itemDrop.m_itemData.m_shared.m_name = "Black Metal Arrow";
+			itemDrop.m_itemData.m_shared.m_description = "A weighty projectile. Glints in the light with a greenish glow.";
+			itemDrop.m_itemData.m_shared.m_weight = 0.2f;
+			itemDrop.m_itemData.m_shared.m_damages.m_pierce = 62;
+			itemDrop.m_itemData.m_shared.m_damages.m_blunt = 40;
 
-			itemDrop.m_itemData.m_shared.m_damages.m_spirit = 0; // zero out the silver arrow dmg
-			
-
-			Texture2D texture2D = QUtility.LoadTextureFromAssets("arrow_crystal.png");
+			Texture2D texture2D = QUtility.LoadTextureFromAssets("arrow_blackmetal.png");
 			Sprite icon = Sprite.Create(texture2D, new Rect(0f, 0f, (float)texture2D.width, (float)texture2D.height), new Vector2(0.5f, 0.5f));
 
 			itemDrop.m_itemData.m_shared.m_icons[0] = icon;
 
 			// Create recipe
-			RecipeCrystalArrow(itemDrop);
+			RecipeBlackMetalArrow(itemDrop);
 
 
 		}
 
-		private static void RecipeCrystalArrow(ItemDrop itemDrop)
+		private static void RecipeBlackMetalArrow(ItemDrop itemDrop)
 		{
 			// Create and add a recipe for the copied item
 			Recipe recipe = ScriptableObject.CreateInstance<Recipe>();
-			recipe.name = "Recipe_CrystalArrow";
+			recipe.name = "Recipe_BlackMetalArrow";
 			recipe.m_item = itemDrop;
 			recipe.m_amount = 20;
 			recipe.m_craftingStation = PrefabManager.Cache.GetPrefab<CraftingStation>("forge");
@@ -57,7 +54,7 @@ namespace Quiver
 			},
 			new Piece.Requirement()
 			{
-				m_resItem = PrefabManager.Cache.GetPrefab<ItemDrop>("Crystal"),
+				m_resItem = PrefabManager.Cache.GetPrefab<ItemDrop>("BlackMetal"),
 				m_amount = 1
 			}
 			};
