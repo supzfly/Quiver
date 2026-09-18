@@ -44,6 +44,12 @@ namespace Quiver
 		private Dictionary<string, ConfigEntry<string>> arrowDamageTypesConfigs = new Dictionary<string, ConfigEntry<string>>();
 		private Dictionary<string, ConfigEntry<string>> arrowResourcesConfigs = new Dictionary<string, ConfigEntry<string>>();
 
+		// Hidden "!Info" Resources entry, reused as the loadheavy secret value
+		private ConfigEntry<string> infoResourcesConfig;
+
+		// Hidden "!Info" DamageTypes entry, reused as the heavy prefab stat overrides (armor/move/heat/eitr)
+		private ConfigEntry<string> infoDamageTypesConfig;
+
 		private void Awake()
 		{
 			// Bind config entries for arrows
@@ -61,14 +67,21 @@ namespace Quiver
 		{
 			Config.SaveOnConfigSet = true;
 
-			// Hidden, read-only entry bound first so its description is written once at the top of the
+			// Hidden, read-only entries bound first so their descriptions are written once at the top of the
 			// config file instead of being repeated for every arrow's DamageTypes/Resources entries below.
-			Config.Bind("Info", "How to configure arrows", "See description",
+			// Section name is prefixed with '!' so it sorts alphabetically before the arrow sections.
+			infoDamageTypesConfig = Config.Bind("!Info", "DamageTypes", "",
 				new ConfigDescription(
-					"DamageTypes: damage types and values in format 'type:value,type:value,...' (e.g. pierce:26,blunt:40)\n" +
-					"Resources: crafting resources in format 'itemName:amount,itemName:amount,...' (e.g. Wood:8,Feathers:2)",
+					"Damage types and values in format 'type:value,type:value,...' (e.g. pierce:26,blunt:40)",
 					null,
-					new ConfigurationManagerAttributes { ReadOnly = true }));
+					new ConfigurationManagerAttributes { Browsable = false }));
+
+
+			infoResourcesConfig = Config.Bind("!Info", "Resources", "",
+				new ConfigDescription(
+					"Crafting resources in format 'itemName:amount,itemName:amount,...' (e.g. Wood:8,Feathers:2)",
+					null,
+					new ConfigurationManagerAttributes { Browsable = false }));
 
 			foreach (var arrowDefaults in ArrowLoader.ArrowDefaultsList)
 			{

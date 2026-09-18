@@ -96,10 +96,6 @@
     <Compile Include="ArrowLoader.cs" />
     <Compile Include="Heavy\HeavyLoader.cs" />
     <Compile Include="Heavy\Heavy.cs" />
-    <Compile Include="Heavy\HeavyShield.cs" />
-    <Compile Include="Heavy\HeavySword.cs" />
-    <Compile Include="Heavy\HeavyBelt.cs" />
-    <Compile Include="Heavy\HeavyHeadTorch.cs" />
     <Compile Include="Quiver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility.cs" />
