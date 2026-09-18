@@ -61,6 +61,15 @@ namespace Quiver
 		{
 			Config.SaveOnConfigSet = true;
 
+			// Hidden, read-only entry bound first so its description is written once at the top of the
+			// config file instead of being repeated for every arrow's DamageTypes/Resources entries below.
+			Config.Bind("Info", "How to configure arrows", "See description",
+				new ConfigDescription(
+					"DamageTypes: damage types and values in format 'type:value,type:value,...' (e.g. pierce:26,blunt:40)\n" +
+					"Resources: crafting resources in format 'itemName:amount,itemName:amount,...' (e.g. Wood:8,Feathers:2)",
+					null,
+					new ConfigurationManagerAttributes { ReadOnly = true }));
+
 			foreach (var arrowDefaults in ArrowLoader.ArrowDefaultsList)
 			{
 				string arrowName = arrowDefaults.arrowName;
@@ -68,12 +77,12 @@ namespace Quiver
 				string section = metadata != null ? metadata.displayName : arrowName;
 
 				var damageTypesEntry = Config.Bind(section, "DamageTypes", arrowDefaults.damageTypes,
-					new ConfigDescription("Damage types and values in format 'type:value,type:value,...' (e.g. pierce:26,blunt:40)",
+					new ConfigDescription("",
 					null,
 					new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
 				var resourcesEntry = Config.Bind(section, "Resources", arrowDefaults.resources,
-					new ConfigDescription("Crafting resources in format 'itemName:amount,itemName:amount,...' (e.g. Wood:8,Feathers:2)",
+					new ConfigDescription("",
 					null,
 					new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
